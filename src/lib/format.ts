@@ -1,11 +1,11 @@
 const MOEDA = new Intl.NumberFormat("pt-BR", {
   style: "currency",
-  currency: "EUR",
+  currency: "GBP",
 });
 
 const MOEDA_COMPACTA = new Intl.NumberFormat("pt-BR", {
   style: "currency",
-  currency: "EUR",
+  currency: "GBP",
   notation: "compact",
   maximumFractionDigits: 1,
 });
@@ -82,7 +82,7 @@ export function nomeDoMes(mes: number): string {
   return MESES[mes] ?? "";
 }
 
-/** Converte "€ 1.234,56" ou "1234,56" em número. */
+/** Converte "£ 1.234,56" ou "1234,56" em número. */
 export function paraNumero(texto: string | number): number {
   if (typeof texto === "number") return texto;
   const limpo = texto.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".");

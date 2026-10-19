@@ -229,7 +229,7 @@ export function ClienteFormDialog({ aberto, aoMudarAberto, cliente }: ClienteFor
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="valor">Valor da assinatura (€)</Label>
+              <Label htmlFor="valor">Valor da assinatura (£)</Label>
               <Input id="valor" inputMode="decimal" {...form.register("valor")} />
               {erros.valor ? <p className="text-xs text-destructive">{erros.valor.message}</p> : null}
             </div>
