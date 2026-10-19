@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif']
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -36,6 +39,36 @@ export default {
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))'
+				},
+				status: {
+					vencido: {
+						DEFAULT: 'hsl(var(--status-vencido))',
+						foreground: 'hsl(var(--status-vencido-foreground))'
+					},
+					hoje: {
+						DEFAULT: 'hsl(var(--status-hoje))',
+						foreground: 'hsl(var(--status-hoje-foreground))'
+					},
+					atencao: {
+						DEFAULT: 'hsl(var(--status-atencao))',
+						foreground: 'hsl(var(--status-atencao-foreground))'
+					},
+					'em-dia': {
+						DEFAULT: 'hsl(var(--status-em-dia))',
+						foreground: 'hsl(var(--status-em-dia-foreground))'
+					}
 				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
@@ -85,11 +118,21 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in-up': {
+					from: { opacity: '0', transform: 'translateY(8px)' },
+					to: { opacity: '1', transform: 'translateY(0)' }
+				},
+				'fade-in': {
+					from: { opacity: '0' },
+					to: { opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in-up': 'fade-in-up 0.35s cubic-bezier(0.4, 0, 0.2, 1) both',
+				'fade-in': 'fade-in 0.3s ease-out both'
 			}
 		}
 	},

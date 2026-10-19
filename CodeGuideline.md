@@ -9,11 +9,17 @@ project-root/
   │   └── locales/           # public/locales/{code}.json translation files
   ├── src/
   │   ├── components/        # All reusable UI components
+  │   │   ├── charts/        # Recharts wrappers (clientes por status/empresa, receita, situação)
+  │   │   ├── layout/        # AppLayout + AppSidebar + PageHeader (shell do sistema)
   │   │   └── ui/            # Prebuilt and custom UI components, grouped by function
   │   ├── hooks/             # Custom React hooks
+  │   │   └── (data hooks)   # use-clientes, use-pagamentos, use-empresas, use-planos,
+  │   │                      # use-configuracoes, use-dashboard — agrupados por entidade (queries + mutations)
   │   ├── i18n/              # i18n runtime: config.ts (entry) + util.ts (helpers)
+  │   ├── integrations/      # Generated Enter Cloud client (do not edit)
   │   ├── lib/               # Utility functions and libraries
-  │   ├── pages/             # Application pages (each page in its own subdirectory)
+│   ├── pages/               # Application pages (each page in its own subdirectory)
+│   ├── types/               # Domain types (assinaturas.ts: clientes, planos, empresa, pagamentos)
   │   ├── App.tsx            # Main app component, sets up route providers
   │   ├── router.tsx         # Router config, sets up routing
   │   ├── main.tsx           # Entry point for the React app
@@ -22,6 +28,16 @@ project-root/
   ├── tailwind.config.ts     # Tailwind CSS configuration
   └── ...                    # Other config and lock files
 ```
+
+## Domínio: Controle de Assinaturas
+
+Aplicação de controle de clientes, assinaturas, pagamentos recorrentes e cobranças (uso interno, sem login).
+
+- **Backend (Enter Cloud)**: tabelas `empresas`, `planos`, `clientes`, `pagamentos`, `configuracoes`, com RLS habilitado. Sem autenticação, as políticas liberam o papel `anon` — restringir exige adicionar login depois.
+- **Regras de negócio**: centralizadas em `src/lib/assinaturas.ts` (dias até o vencimento, status automático de cobrança, coluna de validade, buckets de situação financeira, novo vencimento após pagamento, alertas, métricas, gráficos) e `src/lib/whatsapp.ts` (mensagem padrão de cobrança e link `wa.me`).
+- **Regras derivadas, nunca persistidas**: status de cobrança, validade e métricas são calculados no cliente a partir de `proximo_vencimento`, do plano e dos pagamentos.
+- **Módulos**: dashboard (`/`), clientes (`/clientes`), detalhes do cliente (`/clientes/:id`), pagamentos (`/pagamentos`), calendário financeiro (`/calendario`) e configurações (`/configuracoes`).
+- **Idioma**: interface apenas em Português (Brasil); o scaffolding de i18n do template não é usado.
 
 > Backend-handoff temporary files (`scripts/`, `i18n.scan.json`, `reports/i18n/`, `docs/i18n-*.md`) are kept in the repo only until backend integration of i18n statistics/scan/auto-translate is complete. They are owned by the backend long-term and will be removed once integration lands. Treat them as read-only handoff copies — do not extend them.
 

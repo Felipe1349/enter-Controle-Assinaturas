@@ -138,45 +138,45 @@ Após a migração, inserir via `supabase_insert` (ou SQL de seed executado junt
 
 ## Implementation checklist
 
-- [ ] `supabase_enable` executado com sucesso e cliente gerado em `src/integrations/supabase/client.ts`
-- [ ] Migração criando `empresas`, `planos`, `clientes`, `pagamentos`, `configuracoes` com FKs, índices, `updated_at` e `ON DELETE CASCADE` em `pagamentos.cliente_id`
-- [ ] RLS habilitado + políticas para `anon` nas 5 tabelas, confirmadas via `supabase_get_table_schema`
-- [ ] `src/types/assinaturas.ts` com os tipos das 4 entidades e enums de status/forma de pagamento
-- [ ] `src/lib/format.ts` (BRL, dd/MM/aaaa, input date) e `src/lib/whatsapp.ts` (normalização de telefone + mensagem padrão do doc)
-- [ ] `src/lib/assinaturas.ts` com `diasAteVencimento`, `statusCobranca`, `validadeLabel`, `situacaoFinanceira`, `calcularNovoVencimento` e as métricas do dashboard
-- [ ] Tokens azul/branco/verde + status + gradientes/sombras/animais em `src/index.css`, e extensão de `tailwind.config.ts` (cores de status, sombras, Inter, keyframes)
-- [ ] `index.html` com `lang="pt-BR"`, título, descrição e fonte Inter
-- [ ] `ThemeProvider`/`ThemeToggle` com `next-themes` e modo escuro funcionando em todas as rotas
-- [ ] `AppLayout` com sidebar (desktop) e drawer (mobile), nav para Dashboard/Clientes/Pagamentos/Calendário/Configurações e topbar
-- [ ] Dashboard com os 9 cards, os 4 gráficos (status, empresa, receita mensal 12 meses, situação financeira), painel de alertas, filtros rápidos e bloco de métricas
-- [ ] `/clientes` com colunas do doc, busca, filtros de empresa/status/plano, ordenação por vencimento e filtros rápidos via `?filtro=`
-- [ ] Formulário de cliente (novo/editar) validado com zod, pré-preenchendo valor pelo plano e calculando o primeiro vencimento
-- [ ] Exclusão de cliente com `AlertDialog` e remoção dos pagamentos por cascade
-- [ ] Dialog "Receber pagamento" gravando histórico + recalculando `proximo_vencimento` conforme o plano
-- [ ] `/clientes/:id` com dados cadastrais, financeiro, histórico de pagamentos, observações e linha do tempo
-- [ ] `/pagamentos` com histórico global (ID, cliente, data, valor, forma, observação) e filtros
-- [ ] `/calendario` com vencimentos/recebimentos do dia, cores por situação (vencido/hoje/próximo/pago) e diálogo do dia
-- [ ] `/configuracoes` com edição de `valor_padrao`/`intervalo_dias` dos planos e CRUD de empresas
-- [ ] Botão de WhatsApp na listagem, nos detalhes e nos alertas, com a mensagem padrão
-- [ ] Seed aplicado: 3 empresas, 3 planos, ~24 clientes cobrindo todos os estados, ~80–120 pagamentos em 12 meses
-- [ ] `src/router.tsx` com as rotas novas sob `AppLayout` e `name` semântico; `src/pages/Index.tsx` removido; `NotFound` em pt-BR
-- [ ] `CodeGuideline.md` atualizado com a nova estrutura de pastas
-- [ ] Responsividade revisada nas 6 rotas (sidebar/drawer, grids, tabelas, calendário)
+- [x] `supabase_enable` executado com sucesso e cliente gerado em `src/integrations/supabase/client.ts`
+- [x] Migração criando `empresas`, `planos`, `clientes`, `pagamentos`, `configuracoes` com FKs, índices, `updated_at` e `ON DELETE CASCADE` em `pagamentos.cliente_id`
+- [x] RLS habilitado + políticas para `anon` nas 5 tabelas, confirmadas via `supabase_get_table_schema`
+- [x] `src/types/assinaturas.ts` com os tipos das 4 entidades e enums de status/forma de pagamento
+- [x] `src/lib/format.ts` (BRL, dd/MM/aaaa, input date) e `src/lib/whatsapp.ts` (normalização de telefone + mensagem padrão do doc)
+- [x] `src/lib/assinaturas.ts` com `diasAteVencimento`, `statusCobranca`, `validadeLabel`, `situacaoFinanceira`, `calcularNovoVencimento` e as métricas do dashboard
+- [x] Tokens azul/branco/verde + status + gradientes/sombras/animais em `src/index.css`, e extensão de `tailwind.config.ts` (cores de status, sombras, Inter, keyframes)
+- [x] `index.html` com `lang="pt-BR"`, título, descrição e fonte Inter
+- [x] `ThemeProvider`/`ThemeToggle` com `next-themes` e modo escuro funcionando em todas as rotas
+- [x] `AppLayout` com sidebar (desktop) e drawer (mobile), nav para Dashboard/Clientes/Pagamentos/Calendário/Configurações e topbar
+- [x] Dashboard com os 9 cards, os 4 gráficos (status, empresa, receita mensal 12 meses, situação financeira), painel de alertas, filtros rápidos e bloco de métricas
+- [x] `/clientes` com colunas do doc, busca, filtros de empresa/status/plano, ordenação por vencimento e filtros rápidos via `?filtro=`
+- [x] Formulário de cliente (novo/editar) validado com zod, pré-preenchendo valor pelo plano e calculando o primeiro vencimento
+- [x] Exclusão de cliente com `AlertDialog` e remoção dos pagamentos por cascade
+- [x] Dialog "Receber pagamento" gravando histórico + recalculando `proximo_vencimento` conforme o plano
+- [x] `/clientes/:id` com dados cadastrais, financeiro, histórico de pagamentos, observações e linha do tempo
+- [x] `/pagamentos` com histórico global (ID, cliente, data, valor, forma, observação) e filtros
+- [x] `/calendario` com vencimentos/recebimentos do dia, cores por situação (vencido/hoje/próximo/pago) e diálogo do dia
+- [x] `/configuracoes` com edição de `valor_padrao`/`intervalo_dias` dos planos e CRUD de empresas
+- [x] Botão de WhatsApp na listagem, nos detalhes e nos alertas, com a mensagem padrão
+- [x] Seed aplicado: 3 empresas, 3 planos, ~24 clientes cobrindo todos os estados, ~80–120 pagamentos em 12 meses
+- [x] `src/router.tsx` com as rotas novas sob `AppLayout` e `name` semântico; `src/pages/Index.tsx` removido; `NotFound` em pt-BR
+- [x] `CodeGuideline.md` atualizado com a nova estrutura de pastas
+- [x] Responsividade revisada nas 6 rotas (sidebar/drawer, grids, tabelas, calendário)
 
 ## Verification checklist
 
-- [ ] `pnpm check` (lint + `tsc --noEmit`) passa sem erros
-- [ ] `pnpm run build` conclui sem erros
-- [ ] Seed conferido por `supabase_read_query`: existe ao menos 1 cliente vencido, 1 vence hoje, 1 nos próximos 1–2 dias, 1 nos próximos 3–7 dias, 1 em dia, 1 inativo e 1 sem pagamento há mais de 60 dias
-- [ ] Caso positivo: registrar pagamento de um cliente em atraso gera histórico e novo vencimento = data do pagamento + intervalo do plano
-- [ ] Caso positivo: registrar pagamento de um cliente em dia/antecipado gera novo vencimento = vencimento anterior + intervalo do plano
-- [ ] Caso negativo/default: cliente novo sem pagamentos aparece com "Nunca pagou"/histórico vazio sem erro; filtro sem resultados mostra estado vazio, não quebra
-- [ ] Caso limite: cliente com `proximo_vencimento = hoje` aparece como "Cobrar Hoje"/"VENCE HOJE" e entra no bucket "Vence Hoje" da pizza e do alerta
-- [ ] Caso limite: exclusão de cliente remove os pagamentos vinculados e as somas do dashboard deixam de incluí-lo
-- [ ] Caso limite: editar `valor_padrao` de um plano em `/configuracoes` altera o valor pré-preenchido em um novo cadastro e não altera clientes já existentes
-- [ ] Filtros rápidos (`Em Dia`, `Vence Hoje`, `Próximos 3 dias`, `Vencidos`, `Ativos`, `Inativos`) retornam as contagens coerentes com os cards do dashboard
-- [ ] `website_screenshot` de `/`, `/clientes`, `/clientes/:id` e `/calendario` em `mobile_390` e `desktop_1280` (assumindo esses dois alvos, já que não houve indicação de dispositivo)
-- [ ] `get_console_logs` e `read_network_requests` sem erros após os fluxos de CRUD e pagamento
+- [x] `pnpm check` (lint + `tsc --noEmit`) passa sem erros
+- [x] `pnpm run build` conclui sem erros
+- [x] Seed conferido por `supabase_read_query`: existe ao menos 1 cliente vencido, 1 vence hoje, 1 nos próximos 1–2 dias, 1 nos próximos 3–7 dias, 1 em dia, 1 inativo e 1 sem pagamento há mais de 60 dias
+- [x] Caso positivo: registrar pagamento de um cliente em atraso gera histórico e novo vencimento = data do pagamento + intervalo do plano
+- [x] Caso positivo: registrar pagamento de um cliente em dia/antecipado gera novo vencimento = vencimento anterior + intervalo do plano
+- [x] Caso negativo/default: cliente novo sem pagamentos aparece com "Nunca pagou"/histórico vazio sem erro; filtro sem resultados mostra estado vazio, não quebra
+- [x] Caso limite: cliente com `proximo_vencimento = hoje` aparece como "Cobrar Hoje"/"VENCE HOJE" e entra no bucket "Vence Hoje" da pizza e do alerta
+- [x] Caso limite: exclusão de cliente remove os pagamentos vinculados e as somas do dashboard deixam de incluí-lo
+- [x] Caso limite: editar `valor_padrao` de um plano em `/configuracoes` altera o valor pré-preenchido em um novo cadastro e não altera clientes já existentes
+- [x] Filtros rápidos (`Em Dia`, `Vence Hoje`, `Próximos 3 dias`, `Vencidos`, `Ativos`, `Inativos`) retornam as contagens coerentes com os cards do dashboard
+- [x] `website_screenshot` de `/`, `/clientes`, `/clientes/:id` e `/calendario` em `mobile_390` e `desktop_1280` (assumindo esses dois alvos, já que não houve indicação de dispositivo)
+- [x] `get_console_logs` e `read_network_requests` sem erros após os fluxos de CRUD e pagamento
 
 ## Limitações conhecidas
 
