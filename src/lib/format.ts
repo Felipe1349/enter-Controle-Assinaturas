@@ -1,11 +1,11 @@
 const MOEDA = new Intl.NumberFormat("pt-BR", {
   style: "currency",
-  currency: "BRL",
+  currency: "EUR",
 });
 
 const MOEDA_COMPACTA = new Intl.NumberFormat("pt-BR", {
   style: "currency",
-  currency: "BRL",
+  currency: "EUR",
   notation: "compact",
   maximumFractionDigits: 1,
 });
@@ -82,7 +82,7 @@ export function nomeDoMes(mes: number): string {
   return MESES[mes] ?? "";
 }
 
-/** Converte "R$ 1.234,56" ou "1234,56" em número. */
+/** Converte "€ 1.234,56" ou "1234,56" em número. */
 export function paraNumero(texto: string | number): number {
   if (typeof texto === "number") return texto;
   const limpo = texto.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".");

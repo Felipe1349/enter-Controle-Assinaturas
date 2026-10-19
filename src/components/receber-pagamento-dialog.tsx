@@ -105,7 +105,7 @@ export function ReceberPagamentoDialog({
         <form className="space-y-4" onSubmit={form.handleSubmit(enviar)}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="valor_pago">Valor recebido (R$)</Label>
+              <Label htmlFor="valor_pago">Valor recebido (€)</Label>
               <Input id="valor_pago" inputMode="decimal" {...form.register("valor_pago")} />
               <p className="text-xs text-muted-foreground">
                 Valor da assinatura: {formatarMoeda(cliente.valor)}

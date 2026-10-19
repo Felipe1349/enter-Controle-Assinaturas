@@ -83,7 +83,7 @@ export function PlanosCard() {
                 </p>
               </div>
               <div className="space-y-1">
-                <Label htmlFor={`valor-${plano.id}`}>Valor padrão (R$)</Label>
+                <Label htmlFor={`valor-${plano.id}`}>Valor padrão (€)</Label>
                 <Input
                   id={`valor-${plano.id}`}
                   inputMode="decimal"
