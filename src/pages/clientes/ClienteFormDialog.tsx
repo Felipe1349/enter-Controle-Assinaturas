@@ -18,7 +18,7 @@ import { RESPONSAVEIS } from "@/types/assinaturas";
 const esquema = z.object({
   nome_completo: z.string().trim().min(3, "Informe o nome completo do cliente"),
   responsavel: z.string().refine(valor => valor === "LUCAS" || valor === "KALLEU", "Selecione o responsável"),
-  whatsapp: z.string().trim().refine(valor => valor === "" || valor.replace(/\D/g, "").length >= 10, "Informe o WhatsApp com DDD"),
+  whatsapp: z.string().trim().refine(valor => valor === "" || valor.replace(/\D/g, "").length >= 10, "Informe o WhatsApp com o código do país (+44)"),
   empresa_id: z.string().min(1, "Selecione a empresa"),
   plano_id: z.string().min(1, "Selecione o plano"),
   valor: z.string().min(1, "Informe o valor da assinatura").refine(valor => Number(valor.replace(",", ".")) > 0, "O valor deve ser maior que zero"),
@@ -161,7 +161,7 @@ export function ClienteFormDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="whatsapp">WhatsApp</Label>
-              <Input id="whatsapp" placeholder="(11) 98765-0000" {...form.register("whatsapp")} />
+              <Input id="whatsapp" placeholder="+44 7511 234567" {...form.register("whatsapp")} />
               {erros.whatsapp ? <p className="text-xs text-destructive">{erros.whatsapp.message}</p> : null}
             </div>
           </div>

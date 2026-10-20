@@ -1,12 +1,16 @@
 export const MENSAGEM_COBRANCA_PADRAO =
   "Olá {{nome}}, tudo bem? Verificamos que sua mensalidade está próxima do vencimento. Caso já tenha realizado o pagamento, desconsidere esta mensagem.";
 
-/** Remove tudo que não é dígito e garante o código do país (55). */
+/**
+ * Mantém apenas os dígitos do número. Não adiciona DDI brasileiro (+55):
+ * os clientes são do Reino Unido. Quando o número é digitado no formato
+ * nacional (ex.: 07511 234567), o zero inicial é trocado por 44.
+ */
 export function normalizarWhatsApp(telefone: string | null | undefined): string {
   const digitos = (telefone ?? "").replace(/\D/g, "");
   if (!digitos) return "";
-  if (digitos.startsWith("55")) return digitos;
-  return `55${digitos}`;
+  if (/^0\d{9,10}$/.test(digitos)) return `44${digitos.slice(1)}`;
+  return digitos;
 }
 
 export function montarMensagem(template: string, nome: string): string {

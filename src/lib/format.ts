@@ -90,15 +90,22 @@ export function paraNumero(texto: string | number): number {
   return Number.isNaN(valor) ? 0 : valor;
 }
 
+/** Exibe o telefone priorizando números do Reino Unido (+44). */
 export function formatarTelefone(telefone: string | null | undefined): string {
   if (!telefone) return "—";
-  const digitos = telefone.replace(/\D/g, "");
-  if (digitos.length === 11) {
-    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+  const texto = telefone.trim();
+  const digitos = texto.replace(/\D/g, "");
+  if (!digitos) return "—";
+
+  if (digitos.startsWith("44")) {
+    const nacional = digitos.slice(2).replace(/^0/, "");
+    if (nacional.length > 4) {
+      return `+44 ${nacional.slice(0, 4)} ${nacional.slice(4)}`;
+    }
+    return `+44 ${nacional}`;
   }
-  if (digitos.length === 10) {
-    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
-  }
-  return telefone;
+
+  // Já possui outro DDI ou foi cadastrado com pontuação: mostra como está.
+  return texto;
 }
 
