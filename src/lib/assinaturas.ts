@@ -356,3 +356,23 @@ export function contarPorEmpresa(
     .map(([empresa, total]) => ({ empresa, total }))
     .sort((a, b) => b.total - a.total);
 }
+
+const ROTULOS_RESPONSAVEL: Record<string, string> = {
+  LUCAS: "Lucas",
+  KALLEU: "Kalleu",
+  sem_responsavel: "Sem responsável",
+};
+
+/** Distribuição da carteira por responsável (Lucas, Kalleu e cadastros ainda sem responsável). */
+export function contarPorResponsavel(
+  clientes: ClienteComRelacoes[],
+): { chave: string; label: string; total: number }[] {
+  const mapa = new Map<string, number>();
+  for (const cliente of clientes) {
+    const chave = cliente.responsavel ?? "sem_responsavel";
+    mapa.set(chave, (mapa.get(chave) ?? 0) + 1);
+  }
+  return [...mapa.entries()]
+    .map(([chave, total]) => ({ chave, label: ROTULOS_RESPONSAVEL[chave] ?? chave, total }))
+    .sort((a, b) => b.total - a.total);
+}

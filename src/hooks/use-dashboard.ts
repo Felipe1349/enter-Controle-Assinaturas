@@ -8,6 +8,7 @@ import {
   calcularReceitaMensal,
   calcularReceitaSemanal,
   contarPorEmpresa,
+  contarPorResponsavel,
   contarPorStatus,
   hojeISO,
   SITUACAO_LABEL,
@@ -46,6 +47,7 @@ export function useDashboard() {
       receitaSemanal: calcularReceitaSemanal(pagamentos, 12, referencia),
       porStatus: contarPorStatus(clientes),
       porEmpresa: contarPorEmpresa(clientes),
+      porResponsavel: contarPorResponsavel(clientes),
       porSituacao: SITUACAO_ORDEM.map((situacao) => ({
         situacao,
         label: SITUACAO_LABEL[situacao],

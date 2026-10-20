@@ -21,6 +21,7 @@ const Dashboard = () => {
     receitaSemanal,
     porStatus,
     porEmpresa,
+    porResponsavel,
     porSituacao,
     carregando,
     erro,
@@ -68,6 +69,7 @@ const Dashboard = () => {
           <GraficosPanel
             porStatus={porStatus}
             porEmpresa={porEmpresa}
+            porResponsavel={porResponsavel}
             receitaMensal={receitaMensal}
             receitaSemanal={receitaSemanal}
             porSituacao={porSituacao}

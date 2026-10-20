@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { ClientesPorEmpresaChart } from "@/components/charts/clientes-por-empresa-chart";
+import { ClientesPorResponsavelChart } from "@/components/charts/clientes-por-responsavel-chart";
 import { ClientesPorStatusChart } from "@/components/charts/clientes-por-status-chart";
 import { ReceitaMensalChart } from "@/components/charts/receita-mensal-chart";
 import { ReceitaSemanalChart } from "@/components/charts/receita-semanal-chart";
@@ -17,6 +18,7 @@ import type { StatusCliente } from "@/types/assinaturas";
 interface GraficosPanelProps {
   porStatus: { status: StatusCliente; label: string; total: number }[];
   porEmpresa: { empresa: string; total: number }[];
+  porResponsavel: { chave: string; label: string; total: number }[];
   receitaMensal: { mes: string; rotulo: string; total: number }[];
   receitaSemanal: ReceitaSemanal[];
   porSituacao: { situacao: SituacaoFinanceira; label: string; total: number }[];
@@ -25,6 +27,7 @@ interface GraficosPanelProps {
 export function GraficosPanel({
   porStatus,
   porEmpresa,
+  porResponsavel,
   receitaMensal,
   receitaSemanal,
   porSituacao,
@@ -44,7 +47,7 @@ export function GraficosPanel({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <GraficoCard
           titulo="Clientes por status"
           descricao="Assinaturas ativas e inativas"
@@ -57,9 +60,16 @@ export function GraficosPanel({
         </GraficoCard>
 
         <GraficoCard
+          titulo="Clientes por responsável"
+          descricao="Carteira de Lucas, Kalleu e cadastros sem responsável"
+        >
+          <ClientesPorResponsavelChart dados={porResponsavel} />
+        </GraficoCard>
+
+        <GraficoCard
           titulo="Receita mensal"
           descricao={comNota("Total recebido nos últimos 12 meses")}
-          className="lg:col-span-2"
+          className="lg:col-span-2 xl:col-span-3"
           acoes={<SeletorMoeda valor={moeda} aoMudar={setMoeda} />}
         >
           <ReceitaMensalChart dados={receitaMensal} moeda={moeda} cotacao={cotacao} />
@@ -68,7 +78,7 @@ export function GraficosPanel({
         <GraficoCard
           titulo="Receita semanal"
           descricao={comNota("Total recebido nas últimas 12 semanas (segunda a domingo)")}
-          className="lg:col-span-2"
+          className="lg:col-span-2 xl:col-span-3"
           acoes={<SeletorMoeda valor={moeda} aoMudar={setMoeda} />}
         >
           <ReceitaSemanalChart dados={receitaSemanal} moeda={moeda} cotacao={cotacao} />
@@ -77,7 +87,7 @@ export function GraficosPanel({
         <GraficoCard
           titulo="Situação financeira"
           descricao="Em dia, vence hoje, próximos 7 dias e vencidos"
-          className="lg:col-span-2"
+          className="lg:col-span-2 xl:col-span-3"
         >
           <SituacaoFinanceiraChart dados={porSituacao} />
         </GraficoCard>
