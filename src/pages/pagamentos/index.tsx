@@ -1,9 +1,10 @@
-import { AlertTriangle, Receipt } from "lucide-react";
+import { AlertTriangle, Receipt, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WhatsAppButton } from "@/components/whatsapp-button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,12 +27,16 @@ import { usePagamentos } from "@/hooks/use-pagamentos";
 import { registrarPorMes } from "@/lib/pagamentos";
 import { formatarData, formatarMoeda } from "@/lib/format";
 import { FORMAS_PAGAMENTO, FORMA_PAGAMENTO_LABEL } from "@/types/assinaturas";
+import type { PagamentoComCliente } from "@/types/assinaturas";
+
+import { ExcluirPagamentoDialog } from "./ExcluirPagamentoDialog";
 
 const Pagamentos = () => {
   const { data: pagamentos, isLoading, isError } = usePagamentos();
   const [busca, setBusca] = useState("");
   const [forma, setForma] = useState("todas");
   const [mes, setMes] = useState("todos");
+  const [paraExcluir, setParaExcluir] = useState<PagamentoComCliente | null>(null);
 
   const meses = useMemo(() => registrarPorMes(pagamentos ?? []), [pagamentos]);
 
@@ -136,7 +141,7 @@ const Pagamentos = () => {
                       <TableHead className="text-right">Valor pago</TableHead>
                       <TableHead>Forma de pagamento</TableHead>
                       <TableHead>Observação</TableHead>
-                      <TableHead className="text-right">Cobrar</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -166,11 +171,21 @@ const Pagamentos = () => {
                           {pagamento.observacao ?? "—"}
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className="flex justify-end">
+                          <div className="flex items-center justify-end gap-1">
                             <WhatsAppButton
                               nome={pagamento.clientes?.nome_completo ?? ""}
                               whatsapp={pagamento.clientes?.whatsapp ?? null}
                             />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              title="Excluir pagamento"
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setParaExcluir(pagamento)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -182,6 +197,11 @@ const Pagamentos = () => {
           </CardContent>
         </Card>
       )}
+
+      <ExcluirPagamentoDialog
+        pagamento={paraExcluir}
+        aoMudarAberto={() => setParaExcluir(null)}
+      />
     </div>
   );
 };
