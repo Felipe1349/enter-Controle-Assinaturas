@@ -92,3 +92,27 @@ export function useExcluirPlano() {
     },
   });
 }
+
+/**
+ * Salva a ordem dos planos após o drag and drop, gravando `ordem` = posição na lista.
+ * Só a ordenação de exibição muda; valor, intervalo e vínculos com clientes seguem intactos.
+ */
+export function useReordenarPlanos() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (idsNaOrdem: string[]) => {
+      const resultados = await Promise.all(
+        idsNaOrdem.map((id, indice) =>
+          supabase
+            .from("planos")
+            .update({ ordem: indice + 1 })
+            .eq("id", id),
+        ),
+      );
+      const falha = resultados.find((resultado) => resultado.error)?.error;
+      if (falha) throw falha;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: planosQueryKey }),
+  });
+}

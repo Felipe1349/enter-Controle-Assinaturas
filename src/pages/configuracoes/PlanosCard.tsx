@@ -1,5 +1,20 @@
-import { useEffect, useState } from "react";
-import { Plus, Save, Trash2, Wallet } from "lucide-react";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -14,23 +29,34 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useClientes } from "@/hooks/use-clientes";
-import { useAtualizarPlano, useExcluirPlano, usePlanos } from "@/hooks/use-planos";
+import {
+  useAtualizarPlano,
+  useExcluirPlano,
+  usePlanos,
+  useReordenarPlanos,
+} from "@/hooks/use-planos";
 import type { Plano } from "@/types/assinaturas";
 
 import { AdicionarPlanoDialog } from "./AdicionarPlanoDialog";
+import { PlanoItem } from "./PlanoItem";
 
 export function PlanosCard() {
   const { data: planos, isLoading } = usePlanos();
   const { data: clientes } = useClientes();
   const atualizar = useAtualizarPlano();
   const excluir = useExcluirPlano();
+  const reordenar = useReordenarPlanos();
   const [valores, setValores] = useState<Record<string, { valor: string; intervalo: string }>>({});
   const [novoAberto, setNovoAberto] = useState(false);
   const [planoParaExcluir, setPlanoParaExcluir] = useState<Plano | null>(null);
+  const [ordemLocal, setOrdemLocal] = useState<string[]>([]);
+
+  const sensores = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   useEffect(() => {
     if (!planos) return;
@@ -42,7 +68,18 @@ export function PlanosCard() {
         ]),
       ),
     );
+    setOrdemLocal(planos.map((plano) => plano.id));
   }, [planos]);
+
+  // Mantém a ordem local (otimista) e garante que planos novos apareçam no fim.
+  const planosOrdenados = useMemo(() => {
+    const porId = new Map((planos ?? []).map((plano) => [plano.id, plano]));
+    const ordenados = ordemLocal
+      .map((id) => porId.get(id))
+      .filter((plano): plano is Plano => Boolean(plano));
+    const restantes = (planos ?? []).filter((plano) => !ordemLocal.includes(plano.id));
+    return [...ordenados, ...restantes];
+  }, [planos, ordemLocal]);
 
   const clientesDoPlano = (planoId: string) =>
     (clientes ?? []).filter((cliente) => cliente.plano_id === planoId).length;
@@ -86,6 +123,27 @@ export function PlanosCard() {
     }
   };
 
+  const aoTerminarArrasto = async (evento: DragEndEvent) => {
+    const { active, over } = evento;
+    if (!over || active.id === over.id) return;
+
+    const ids = planosOrdenados.map((plano) => plano.id);
+    const origem = ids.indexOf(String(active.id));
+    const destino = ids.indexOf(String(over.id));
+    if (origem < 0 || destino < 0) return;
+
+    const novaOrdem = arrayMove(ids, origem, destino);
+    setOrdemLocal(novaOrdem);
+
+    try {
+      await reordenar.mutateAsync(novaOrdem);
+      toast.success("Ordem dos planos salva.");
+    } catch {
+      toast.error("Não foi possível salvar a nova ordem.");
+      setOrdemLocal((planos ?? []).map((plano) => plano.id));
+    }
+  };
+
   return (
     <Card className="card-gradient border-border/70 shadow-card">
       <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-start sm:justify-between sm:space-y-0">
@@ -96,7 +154,7 @@ export function PlanosCard() {
           </CardTitle>
           <CardDescription>
             Ajuste valor e periodicidade, adicione novas condições (diário, trimestral, anual) ou
-            exclua planos que não usa mais.
+            exclua planos que não usa mais. Arraste pelo ícone à esquerda para reordenar.
           </CardDescription>
         </div>
         <Button
@@ -113,78 +171,41 @@ export function PlanosCard() {
       <CardContent className="space-y-4">
         {isLoading ? (
           <Skeleton className="h-32 rounded-xl" />
-        ) : (planos ?? []).length === 0 ? (
+        ) : planosOrdenados.length === 0 ? (
           <p className="rounded-lg bg-muted/60 px-3 py-3 text-sm text-muted-foreground">
             Nenhum plano cadastrado. Adicione um plano para poder cadastrar clientes.
           </p>
         ) : (
-          (planos ?? []).map((plano) => {
-            const vinculados = clientesDoPlano(plano.id);
-            return (
-              <div
-                key={plano.id}
-                className="grid grid-cols-1 items-end gap-3 rounded-lg border border-border/60 bg-background/60 p-3 sm:grid-cols-[1.2fr_1fr_1fr_auto]"
-              >
-                <div>
-                  <p className="text-sm font-semibold">{plano.nome}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Vencimento a cada {plano.intervalo_dias} dias · {vinculados}{" "}
-                    {vinculados === 1 ? "cliente" : "clientes"}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor={`valor-${plano.id}`}>Valor padrão (£)</Label>
-                  <Input
-                    id={`valor-${plano.id}`}
-                    inputMode="decimal"
-                    value={valores[plano.id]?.valor ?? ""}
-                    onChange={(evento) =>
+          <DndContext
+            sensors={sensores}
+            collisionDetection={closestCenter}
+            onDragEnd={aoTerminarArrasto}
+          >
+            <SortableContext
+              items={planosOrdenados.map((plano) => plano.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {planosOrdenados.map((plano) => (
+                  <PlanoItem
+                    key={plano.id}
+                    plano={plano}
+                    vinculados={clientesDoPlano(plano.id)}
+                    valores={valores[plano.id]}
+                    salvando={atualizar.isPending}
+                    aoMudarValor={(campo, valorDigitado) =>
                       setValores((atual) => ({
                         ...atual,
-                        [plano.id]: { ...atual[plano.id], valor: evento.target.value },
+                        [plano.id]: { ...atual[plano.id], [campo]: valorDigitado },
                       }))
                     }
+                    aoSalvar={() => salvar(plano)}
+                    aoExcluir={() => setPlanoParaExcluir(plano)}
                   />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor={`intervalo-${plano.id}`}>Intervalo (dias)</Label>
-                  <Input
-                    id={`intervalo-${plano.id}`}
-                    inputMode="numeric"
-                    value={valores[plano.id]?.intervalo ?? ""}
-                    onChange={(evento) =>
-                      setValores((atual) => ({
-                        ...atual,
-                        [plano.id]: { ...atual[plano.id], intervalo: evento.target.value },
-                      }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => salvar(plano)}
-                    disabled={atualizar.isPending}
-                  >
-                    <Save className="h-4 w-4" />
-                    Salvar
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    title="Excluir plano"
-                    aria-label={`Excluir plano ${plano.nome}`}
-                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => setPlanoParaExcluir(plano)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                ))}
               </div>
-            );
-          })
+            </SortableContext>
+          </DndContext>
         )}
       </CardContent>
 
