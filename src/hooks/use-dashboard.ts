@@ -6,6 +6,7 @@ import {
   calcularAlertas,
   calcularMetricas,
   calcularReceitaMensal,
+  calcularReceitaSemanal,
   contarPorEmpresa,
   contarPorStatus,
   hojeISO,
@@ -42,6 +43,7 @@ export function useDashboard() {
       metricas: calcularMetricas(clientes, pagamentos, referencia),
       alertas: calcularAlertas(clientes, pagamentos, referencia),
       receitaMensal: calcularReceitaMensal(pagamentos, 12, referencia),
+      receitaSemanal: calcularReceitaSemanal(pagamentos, 12, referencia),
       porStatus: contarPorStatus(clientes),
       porEmpresa: contarPorEmpresa(clientes),
       porSituacao: SITUACAO_ORDEM.map((situacao) => ({

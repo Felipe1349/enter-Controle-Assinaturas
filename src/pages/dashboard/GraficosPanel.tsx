@@ -1,16 +1,18 @@
 import { ClientesPorEmpresaChart } from "@/components/charts/clientes-por-empresa-chart";
 import { ClientesPorStatusChart } from "@/components/charts/clientes-por-status-chart";
 import { ReceitaMensalChart } from "@/components/charts/receita-mensal-chart";
+import { ReceitaSemanalChart } from "@/components/charts/receita-semanal-chart";
 import { SituacaoFinanceiraChart } from "@/components/charts/situacao-financeira-chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { SituacaoFinanceira } from "@/lib/assinaturas";
+import type { ReceitaSemanal, SituacaoFinanceira } from "@/lib/assinaturas";
 import type { StatusCliente } from "@/types/assinaturas";
 
 interface GraficosPanelProps {
   porStatus: { status: StatusCliente; label: string; total: number }[];
   porEmpresa: { empresa: string; total: number }[];
   receitaMensal: { mes: string; rotulo: string; total: number }[];
+  receitaSemanal: ReceitaSemanal[];
   porSituacao: { situacao: SituacaoFinanceira; label: string; total: number }[];
 }
 
@@ -18,6 +20,7 @@ export function GraficosPanel({
   porStatus,
   porEmpresa,
   receitaMensal,
+  receitaSemanal,
   porSituacao,
 }: GraficosPanelProps) {
   return (
@@ -47,6 +50,14 @@ export function GraficosPanel({
           className="lg:col-span-2"
         >
           <ReceitaMensalChart dados={receitaMensal} />
+        </GraficoCard>
+
+        <GraficoCard
+          titulo="Receita semanal"
+          descricao="Total recebido nas últimas 12 semanas (segunda a domingo)"
+          className="lg:col-span-2"
+        >
+          <ReceitaSemanalChart dados={receitaSemanal} />
         </GraficoCard>
 
         <GraficoCard

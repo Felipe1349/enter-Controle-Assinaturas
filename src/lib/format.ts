@@ -46,6 +46,12 @@ export function formatarData(iso: string | null | undefined): string {
   return DATA.format(paraData(iso));
 }
 
+/** "19/10" a partir de uma data ISO (usado em rótulos de eixo). */
+export function formatarDiaMes(iso: string): string {
+  const [, mes, dia] = iso.slice(0, 10).split("-");
+  return `${dia}/${mes}`;
+}
+
 
 
 const MESES = [

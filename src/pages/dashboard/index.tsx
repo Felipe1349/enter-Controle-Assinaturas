@@ -18,6 +18,7 @@ const Dashboard = () => {
     metricas,
     alertas,
     receitaMensal,
+    receitaSemanal,
     porStatus,
     porEmpresa,
     porSituacao,
@@ -68,6 +69,7 @@ const Dashboard = () => {
             porStatus={porStatus}
             porEmpresa={porEmpresa}
             receitaMensal={receitaMensal}
+            receitaSemanal={receitaSemanal}
             porSituacao={porSituacao}
           />
           <MetricasPanel metricas={metricas} />

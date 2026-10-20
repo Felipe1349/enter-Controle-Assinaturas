@@ -1,4 +1,4 @@
-import { MESES_ABREVIADOS, paraData, paraISO } from "@/lib/format";
+import { MESES_ABREVIADOS, formatarDiaMes, paraData, paraISO } from "@/lib/format";
 import type {
   ClienteComRelacoes,
   Pagamento,
@@ -294,6 +294,47 @@ export function calcularReceitaMensal(
 
 export function intervaloDoPlano(plano: Plano | null | undefined): number {
   return plano?.intervalo_dias ?? 30;
+}
+
+export interface ReceitaSemanal {
+  inicio: string;
+  rotulo: string;
+  faixa: string;
+  total: number;
+}
+
+/**
+ * Receita recebida por semana (semanas de segunda a domingo, da mais antiga para a mais recente).
+ * A última semana é a semana corrente, que pode estar parcialmente preenchida.
+ */
+export function calcularReceitaSemanal(
+  pagamentos: Pagamento[],
+  semanas = 12,
+  referencia: string = hojeISO(),
+): ReceitaSemanal[] {
+  const diaDaSemana = (paraData(referencia).getDay() + 6) % 7; // 0 = segunda-feira
+  const inicioSemanaAtual = adicionarDias(referencia, -diaDaSemana);
+  const resultado: ReceitaSemanal[] = [];
+
+  for (let i = semanas - 1; i >= 0; i -= 1) {
+    const inicio = adicionarDias(inicioSemanaAtual, -i * 7);
+    const fim = adicionarDias(inicio, 6);
+    const total = pagamentos
+      .filter((pagamento) => {
+        const data = pagamento.data_pagamento.slice(0, 10);
+        return data >= inicio && data <= fim;
+      })
+      .reduce((soma, pagamento) => soma + Number(pagamento.valor_pago), 0);
+
+    resultado.push({
+      inicio,
+      rotulo: formatarDiaMes(inicio),
+      faixa: `${formatarDiaMes(inicio)} a ${formatarDiaMes(fim)}`,
+      total,
+    });
+  }
+
+  return resultado;
 }
 
 export function contarPorStatus(clientes: ClienteComRelacoes[]): { status: StatusCliente; label: string; total: number }[] {
