@@ -80,7 +80,7 @@ const Clientes = () => {
       if (!termo) return true;
       return [
         cliente.nome_completo,
-        cliente.email ?? "",
+        cliente.responsavel ?? "",
         cliente.whatsapp ?? "",
         cliente.empresas?.nome ?? "",
         cliente.planos?.nome ?? "",

@@ -1,5 +1,12 @@
 export type StatusCliente = "ativo" | "inativo";
 
+export type Responsavel = "LUCAS" | "KALLEU";
+
+export const RESPONSAVEIS: { valor: Responsavel; label: string }[] = [
+  { valor: "LUCAS", label: "LUCAS" },
+  { valor: "KALLEU", label: "KALLEU" },
+];
+
 export type FormaPagamento = "pix" | "cartao" | "dinheiro" | "transferencia";
 
 export interface Empresa {
@@ -23,6 +30,7 @@ export interface Cliente {
   id: string;
   nome_completo: string;
   email: string | null;
+  responsavel: Responsavel | null;
   whatsapp: string | null;
   empresa_id: string | null;
   plano_id: string | null;
@@ -65,7 +73,7 @@ export interface Configuracao {
 
 export interface ClienteFormulario {
   nome_completo: string;
-  email: string;
+  responsavel: string;
   whatsapp: string;
   empresa_id: string;
   plano_id: string;

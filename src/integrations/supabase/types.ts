@@ -3371,6 +3371,7 @@ export type Database = {
           observacoes: string | null
           plano_id: string | null
           proximo_vencimento: string
+          responsavel: string | null
           status: string
           updated_at: string
           valor: number
@@ -3386,6 +3387,7 @@ export type Database = {
           observacoes?: string | null
           plano_id?: string | null
           proximo_vencimento: string
+          responsavel?: string | null
           status?: string
           updated_at?: string
           valor?: number
@@ -3401,6 +3403,7 @@ export type Database = {
           observacoes?: string | null
           plano_id?: string | null
           proximo_vencimento?: string
+          responsavel?: string | null
           status?: string
           updated_at?: string
           valor?: number
@@ -3718,6 +3721,39 @@ export type Database = {
         Relationships: []
       }
       messages_2026_10_22: {
+        Row: {
+          event: string | null
+          extension: string
+          id: string
+          inserted_at: string
+          payload: Json | null
+          private: boolean | null
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          event?: string | null
+          extension: string
+          id?: string
+          inserted_at?: string
+          payload?: Json | null
+          private?: boolean | null
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          event?: string | null
+          extension?: string
+          id?: string
+          inserted_at?: string
+          payload?: Json | null
+          private?: boolean | null
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      messages_2026_10_23: {
         Row: {
           event: string | null
           extension: string

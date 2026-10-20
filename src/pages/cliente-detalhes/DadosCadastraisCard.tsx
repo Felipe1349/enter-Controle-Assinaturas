@@ -1,4 +1,4 @@
-import { Building2, CalendarDays, Mail, MessageCircle, Phone, User } from "lucide-react";
+import { Building2, CalendarDays, MessageCircle, Phone, User, UserCheck } from "lucide-react";
 
 import { StatusClienteBadge } from "@/components/status-badge";
 import { WhatsAppButton } from "@/components/whatsapp-button";
@@ -23,9 +23,9 @@ export function DadosCadastraisCard({ cliente }: DadosCadastraisCardProps) {
         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Campo rotulo="Nome completo" valor={cliente.nome_completo} />
           <Campo
-            rotulo="E-mail"
-            valor={cliente.email ?? "—"}
-            icone={<Mail className="h-3.5 w-3.5" />}
+            rotulo="Responsável"
+            valor={cliente.responsavel ?? "—"}
+            icone={<UserCheck className="h-3.5 w-3.5" />}
           />
           <div className="space-y-1">
             <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

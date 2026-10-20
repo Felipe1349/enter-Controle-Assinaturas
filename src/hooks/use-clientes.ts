@@ -16,9 +16,14 @@ export const clientesQueryKey = ["clientes"] as const;
 const SELECT_CLIENTE = "*, empresas(*), planos(*)";
 
 export function paraPayloadCliente(dados: ClienteFormulario) {
+  const responsavelValido =
+    dados.responsavel === "LUCAS" || dados.responsavel === "KALLEU"
+      ? dados.responsavel
+      : null;
+
   return {
     nome_completo: dados.nome_completo.trim(),
-    email: dados.email.trim() || null,
+    responsavel: responsavelValido,
     whatsapp: dados.whatsapp.trim() || null,
     empresa_id: dados.empresa_id || null,
     plano_id: dados.plano_id || null,

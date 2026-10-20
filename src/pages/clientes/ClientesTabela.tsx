@@ -65,7 +65,9 @@ export function ClientesTabela({
                         >
                           {cliente.nome_completo}
                         </Link>
-                        <p className="text-xs text-muted-foreground">{cliente.email ?? "Responsável"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Responsável: {cliente.responsavel ?? "—"}
+                        </p>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

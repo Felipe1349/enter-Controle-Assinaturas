@@ -14,9 +14,10 @@ import { useSalvarCliente } from "@/hooks/use-clientes";
 import { usePlanos } from "@/hooks/use-planos";
 import { adicionarDias, hojeISO } from "@/lib/assinaturas";
 import type { ClienteComRelacoes } from "@/types/assinaturas";
+import { RESPONSAVEIS } from "@/types/assinaturas";
 const esquema = z.object({
   nome_completo: z.string().trim().min(3, "Informe o nome completo do cliente"),
-  email: z.string().trim().refine(valor => valor === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor), "E-mail inválido"),
+  responsavel: z.string().refine(valor => valor === "LUCAS" || valor === "KALLEU", "Selecione o responsável"),
   whatsapp: z.string().trim().refine(valor => valor === "" || valor.replace(/\D/g, "").length >= 10, "Informe o WhatsApp com DDD"),
   empresa_id: z.string().min(1, "Selecione a empresa"),
   plano_id: z.string().min(1, "Selecione o plano"),
@@ -49,7 +50,7 @@ export function ClienteFormDialog({
     resolver: zodResolver(esquema),
     defaultValues: {
       nome_completo: "",
-      email: "",
+      responsavel: "",
       whatsapp: "",
       empresa_id: "",
       plano_id: "",
@@ -68,7 +69,7 @@ export function ClienteFormDialog({
     if (cliente) {
       form.reset({
         nome_completo: cliente.nome_completo,
-        email: cliente.email ?? "",
+        responsavel: cliente.responsavel ?? "",
         whatsapp: cliente.whatsapp ?? "",
         empresa_id: cliente.empresa_id ?? "",
         plano_id: cliente.plano_id ?? "",
@@ -84,7 +85,7 @@ export function ClienteFormDialog({
     const plano = planos?.[0];
     form.reset({
       nome_completo: "",
-      email: "",
+      responsavel: "",
       whatsapp: "",
       empresa_id: empresas?.[0]?.id ?? "",
       plano_id: plano?.id ?? "",
@@ -143,9 +144,20 @@ export function ClienteFormDialog({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="email">{"Respons\xE1vel"}</Label>
-              <Input id="email" type="email" {...form.register("email")} />
-              {erros.email ? <p className="text-xs text-destructive">{erros.email.message}</p> : null}
+              <Label>Responsável</Label>
+              <Select value={form.watch("responsavel")} onValueChange={valor => form.setValue("responsavel", valor, {
+              shouldValidate: true
+            })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o responsável" />
+                </SelectTrigger>
+                <SelectContent>
+                  {RESPONSAVEIS.map(item => <SelectItem key={item.valor} value={item.valor}>
+                      {item.label}
+                    </SelectItem>)}
+                </SelectContent>
+              </Select>
+              {erros.responsavel ? <p className="text-xs text-destructive">{erros.responsavel.message}</p> : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="whatsapp">WhatsApp</Label>
