@@ -6,7 +6,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { formatarMoeda, formatarMoedaCompacta } from "@/lib/format";
+import { formatarMoeda, formatarMoedaCompacta, type MoedaCodigo } from "@/lib/format";
+import { converterValor } from "@/lib/moeda";
 
 const CONFIG = {
   total: { label: "Recebido", color: "hsl(var(--primary))" },
@@ -14,12 +15,19 @@ const CONFIG = {
 
 interface ReceitaMensalChartProps {
   dados: { mes: string; rotulo: string; total: number }[];
+  moeda: MoedaCodigo;
+  cotacao: number;
 }
 
-export function ReceitaMensalChart({ dados }: ReceitaMensalChartProps) {
+export function ReceitaMensalChart({ dados, moeda, cotacao }: ReceitaMensalChartProps) {
+  const dadosVisiveis = dados.map((item) => ({
+    ...item,
+    total: converterValor(item.total, moeda, cotacao),
+  }));
+
   return (
     <ChartContainer config={CONFIG} className="aspect-auto h-[280px] w-full">
-      <BarChart data={dados} margin={{ left: 4, right: 8, top: 8, bottom: 4 }}>
+      <BarChart data={dadosVisiveis} margin={{ left: 4, right: 8, top: 8, bottom: 4 }}>
         <defs>
           <linearGradient id="gradiente-receita" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.95} />
@@ -32,14 +40,14 @@ export function ReceitaMensalChart({ dados }: ReceitaMensalChartProps) {
           tickLine={false}
           axisLine={false}
           width={72}
-          tickFormatter={(valor: number) => formatarMoedaCompacta(valor)}
+          tickFormatter={(valor: number) => formatarMoedaCompacta(valor, moeda)}
         />
         <ChartTooltip
           cursor={{ fill: "hsl(var(--muted))" }}
           content={
             <ChartTooltipContent
               nameKey="rotulo"
-              formatter={(value) => formatarMoeda(Number(value))}
+              formatter={(value) => formatarMoeda(Number(value), moeda)}
             />
           }
         />

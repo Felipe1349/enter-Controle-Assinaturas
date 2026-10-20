@@ -1,14 +1,25 @@
-const MOEDA = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "GBP",
-});
+export type MoedaCodigo = "GBP" | "BRL";
 
-const MOEDA_COMPACTA = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "GBP",
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
+const FORMATADORES: Record<MoedaCodigo, { completa: Intl.NumberFormat; compacta: Intl.NumberFormat }> = {
+  GBP: {
+    completa: new Intl.NumberFormat("pt-BR", { style: "currency", currency: "GBP" }),
+    compacta: new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "GBP",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }),
+  },
+  BRL: {
+    completa: new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }),
+    compacta: new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }),
+  },
+};
 
 const DATA = new Intl.DateTimeFormat("pt-BR", {
   day: "2-digit",
@@ -16,12 +27,18 @@ const DATA = new Intl.DateTimeFormat("pt-BR", {
   year: "numeric",
 });
 
-export function formatarMoeda(valor: number | null | undefined): string {
-  return MOEDA.format(Number(valor ?? 0));
+export function formatarMoeda(
+  valor: number | null | undefined,
+  moeda: MoedaCodigo = "GBP",
+): string {
+  return FORMATADORES[moeda].completa.format(Number(valor ?? 0));
 }
 
-export function formatarMoedaCompacta(valor: number | null | undefined): string {
-  return MOEDA_COMPACTA.format(Number(valor ?? 0));
+export function formatarMoedaCompacta(
+  valor: number | null | undefined,
+  moeda: MoedaCodigo = "GBP",
+): string {
+  return FORMATADORES[moeda].compacta.format(Number(valor ?? 0));
 }
 
 export function formatarPercentual(valor: number): string {

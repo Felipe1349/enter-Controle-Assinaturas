@@ -6,7 +6,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { formatarMoeda, formatarMoedaCompacta } from "@/lib/format";
+import { formatarMoeda, formatarMoedaCompacta, type MoedaCodigo } from "@/lib/format";
+import { converterValor } from "@/lib/moeda";
 import type { ReceitaSemanal } from "@/lib/assinaturas";
 
 const CONFIG = {
@@ -15,14 +16,20 @@ const CONFIG = {
 
 interface ReceitaSemanalChartProps {
   dados: ReceitaSemanal[];
+  moeda: MoedaCodigo;
+  cotacao: number;
 }
 
-export function ReceitaSemanalChart({ dados }: ReceitaSemanalChartProps) {
-  const faixas = new Map(dados.map((item) => [item.rotulo, item.faixa]));
+export function ReceitaSemanalChart({ dados, moeda, cotacao }: ReceitaSemanalChartProps) {
+  const dadosVisiveis = dados.map((item) => ({
+    ...item,
+    total: converterValor(item.total, moeda, cotacao),
+  }));
+  const faixas = new Map(dadosVisiveis.map((item) => [item.rotulo, item.faixa]));
 
   return (
     <ChartContainer config={CONFIG} className="aspect-auto h-[280px] w-full">
-      <BarChart data={dados} margin={{ left: 4, right: 8, top: 8, bottom: 4 }}>
+      <BarChart data={dadosVisiveis} margin={{ left: 4, right: 8, top: 8, bottom: 4 }}>
         <defs>
           <linearGradient id="gradiente-receita-semanal" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity={0.95} />
@@ -35,7 +42,7 @@ export function ReceitaSemanalChart({ dados }: ReceitaSemanalChartProps) {
           tickLine={false}
           axisLine={false}
           width={72}
-          tickFormatter={(valor: number) => formatarMoedaCompacta(valor)}
+          tickFormatter={(valor: number) => formatarMoedaCompacta(valor, moeda)}
         />
         <ChartTooltip
           cursor={{ fill: "hsl(var(--muted))" }}
@@ -43,7 +50,7 @@ export function ReceitaSemanalChart({ dados }: ReceitaSemanalChartProps) {
             <ChartTooltipContent
               nameKey="rotulo"
               labelFormatter={(valor) => faixas.get(String(valor)) ?? valor}
-              formatter={(value) => formatarMoeda(Number(value))}
+              formatter={(value) => formatarMoeda(Number(value), moeda)}
             />
           }
         />
