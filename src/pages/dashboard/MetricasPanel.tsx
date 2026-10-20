@@ -1,8 +1,10 @@
-import { Coins, Percent, PiggyBank, TrendingUp, UserCheck, Wallet } from "lucide-react";
+import { Banknote, Coins, Percent, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { useCotacaoGbpBrl } from "@/hooks/use-configuracoes";
 import { formatarMoeda, formatarPercentual } from "@/lib/format";
+import { converterValor, descricaoCotacao } from "@/lib/moeda";
 import type { MetricasDashboard } from "@/lib/assinaturas";
 
 interface MetricasPanelProps {
@@ -10,6 +12,9 @@ interface MetricasPanelProps {
 }
 
 export function MetricasPanel({ metricas }: MetricasPanelProps) {
+  const cotacao = useCotacaoGbpBrl();
+  const totalRecebidoEmReais = converterValor(metricas.totalRecebidoMes, "BRL", cotacao);
+
   const itens: { rotulo: string; valor: string; detalhe: string; icone: LucideIcon }[] = [
     {
       rotulo: "MRR (Receita Mensal Recorrente)",
@@ -36,10 +41,10 @@ export function MetricasPanel({ metricas }: MetricasPanelProps) {
       icone: PiggyBank,
     },
     {
-      rotulo: "Número de clientes ativos",
-      valor: String(metricas.ativos),
-      detalhe: `${metricas.totalClientes} clientes na base`,
-      icone: UserCheck,
+      rotulo: "Total recebido no mês (R$)",
+      valor: formatarMoeda(totalRecebidoEmReais, "BRL"),
+      detalhe: descricaoCotacao("BRL", cotacao) ?? "Valores salvos em libras",
+      icone: Banknote,
     },
     {
       rotulo: "Taxa de inadimplência",
