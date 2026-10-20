@@ -171,7 +171,7 @@ export function ClienteFormDialog({ aberto, aoMudarAberto, cliente }: ClienteFor
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">ResponsávelLucasKalleo</Label>
               <Input id="email" type="email" {...form.register("email")} />
               {erros.email ? <p className="text-xs text-destructive">{erros.email.message}</p> : null}
             </div>

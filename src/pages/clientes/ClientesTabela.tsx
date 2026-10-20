@@ -65,7 +65,7 @@ export function ClientesTabela({
                         >
                           {cliente.nome_completo}
                         </Link>
-                        <p className="text-xs text-muted-foreground">{cliente.email ?? "sem e-mail"}</p>
+                        <p className="text-xs text-muted-foreground">{cliente.email ?? "Responsável"}</p>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
