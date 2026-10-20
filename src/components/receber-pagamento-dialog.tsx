@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRegistrarPagamento } from "@/hooks/use-clientes";
 import { calcularNovoVencimento, hojeISO, intervaloDoPlano } from "@/lib/assinaturas";
 import { formatarData, formatarMoeda, paraNumero } from "@/lib/format";
-import { FORMAS_PAGAMENTO, FORMA_PAGAMENTO_LABEL } from "@/types/assinaturas";
+import { FORMAS_PAGAMENTO, FORMA_PAGAMENTO_LABEL, FORMA_PAGAMENTO_PADRAO } from "@/types/assinaturas";
 import type { ClienteComRelacoes, FormaPagamento, PagamentoFormulario } from "@/types/assinaturas";
 
 type ClientePagamento = Pick<
@@ -49,7 +49,7 @@ export function ReceberPagamentoDialog({
     defaultValues: {
       valor_pago: "",
       data_pagamento: hojeISO(),
-      forma_pagamento: "pix",
+      forma_pagamento: FORMA_PAGAMENTO_PADRAO,
       observacao: "",
     },
   });
@@ -59,7 +59,7 @@ export function ReceberPagamentoDialog({
     form.reset({
       valor_pago: String(cliente.valor),
       data_pagamento: hojeISO(),
-      forma_pagamento: "pix",
+      forma_pagamento: FORMA_PAGAMENTO_PADRAO,
       observacao: "",
     });
   }, [aberto, cliente, form]);

@@ -98,12 +98,23 @@ export const FORMA_PAGAMENTO_LABEL: Record<FormaPagamento, string> = {
   transferencia: "Transferência",
 };
 
-export const FORMAS_PAGAMENTO: FormaPagamento[] = [
+/**
+ * Formas de pagamento oferecidas no registro de recebimentos.
+ * PIX foi descontinuado na operação (o padrão passou a ser Transferência), mas o rótulo
+ * continua existindo em FORMA_PAGAMENTO_LABEL para exibir os lançamentos antigos.
+ */
+export const FORMAS_PAGAMENTO: FormaPagamento[] = ["transferencia", "cartao", "dinheiro"];
+
+/** Inclui PIX para permitir filtrar/consultar lançamentos anteriores à mudança. */
+export const FORMAS_PAGAMENTO_FILTRO: FormaPagamento[] = [
   "pix",
+  "transferencia",
   "cartao",
   "dinheiro",
-  "transferencia",
 ];
+
+/** Forma marcada por padrão no diálogo de recebimento. */
+export const FORMA_PAGAMENTO_PADRAO: FormaPagamento = "transferencia";
 
 export const STATUS_CLIENTE_LABEL: Record<StatusCliente, string> = {
   ativo: "Ativo",

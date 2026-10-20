@@ -26,7 +26,7 @@ import {
 import { usePagamentos } from "@/hooks/use-pagamentos";
 import { registrarPorMes } from "@/lib/pagamentos";
 import { formatarData, formatarMoeda } from "@/lib/format";
-import { FORMAS_PAGAMENTO, FORMA_PAGAMENTO_LABEL } from "@/types/assinaturas";
+import { FORMAS_PAGAMENTO_FILTRO, FORMA_PAGAMENTO_LABEL } from "@/types/assinaturas";
 import type { PagamentoComCliente } from "@/types/assinaturas";
 
 import { ExcluirPagamentoDialog } from "./ExcluirPagamentoDialog";
@@ -92,7 +92,7 @@ const Pagamentos = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todas">Todas as formas</SelectItem>
-              {FORMAS_PAGAMENTO.map((item) => (
+              {FORMAS_PAGAMENTO_FILTRO.map((item) => (
                 <SelectItem key={item} value={item}>
                   {FORMA_PAGAMENTO_LABEL[item]}
                 </SelectItem>
