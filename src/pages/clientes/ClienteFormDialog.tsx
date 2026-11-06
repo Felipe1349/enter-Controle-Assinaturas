@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -46,6 +46,9 @@ export function ClienteFormDialog({
   } = usePlanos();
   const salvar = useSalvarCliente();
   const [vencimentoManual, setVencimentoManual] = useState(false);
+  // Espelha o estado de forma síncrona: o efeito abaixo roda na mesma renderização do reset
+  // e não pode sobrescrever o vencimento já gravado (ex.: o que o pagamento avançou).
+  const vencimentoManualRef = useRef(false);
   const form = useForm<Valores>({
     resolver: zodResolver(esquema),
     defaultValues: {
@@ -66,6 +69,7 @@ export function ClienteFormDialog({
   useEffect(() => {
     if (!aberto) return;
     setVencimentoManual(Boolean(cliente));
+    vencimentoManualRef.current = Boolean(cliente);
     if (cliente) {
       form.reset({
         nome_completo: cliente.nome_completo,
@@ -99,7 +103,7 @@ export function ClienteFormDialog({
 
   // O primeiro vencimento acompanha o plano enquanto o usuário não editar a data manualmente.
   useEffect(() => {
-    if (!aberto || vencimentoManual || !dataCadastro) return;
+    if (!aberto || vencimentoManualRef.current || !dataCadastro) return;
     const plano = planos?.find(item => item.id === planoId);
     form.setValue("proximo_vencimento", adicionarDias(dataCadastro, plano?.intervalo_dias ?? 30));
   }, [aberto, dataCadastro, planoId, vencimentoManual, planos, form]);
@@ -108,7 +112,7 @@ export function ClienteFormDialog({
     const plano = planos?.find(item => item.id === novoPlanoId);
     if (plano) {
       form.setValue("valor", String(plano.valor_padrao));
-      if (!vencimentoManual && dataCadastro) {
+      if (!vencimentoManualRef.current && dataCadastro) {
         form.setValue("proximo_vencimento", adicionarDias(dataCadastro, plano.intervalo_dias));
       }
     }
@@ -214,7 +218,10 @@ export function ClienteFormDialog({
             <div className="space-y-2">
               <Label htmlFor="proximo_vencimento">Próximo vencimento</Label>
               <Input id="proximo_vencimento" type="date" {...form.register("proximo_vencimento", {
-              onChange: () => setVencimentoManual(true)
+              onChange: () => {
+                vencimentoManualRef.current = true;
+                setVencimentoManual(true);
+              }
             })} />
               {erros.proximo_vencimento ? <p className="text-xs text-destructive">{erros.proximo_vencimento.message}</p> : null}
             </div>
