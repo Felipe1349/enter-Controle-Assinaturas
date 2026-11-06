@@ -87,7 +87,7 @@ export function CardsOverview({ metricas }: CardsOverviewProps) {
     {
       titulo: "Valor em Dia",
       valor: formatarMoeda(metricas.valorEmDia),
-      descricao: "Total recebido, inclui pagamentos com data futura",
+      descricao: "Assinaturas dentro do prazo",
       icone: BadgeCheck,
       tom: "success",
     },

@@ -230,13 +230,11 @@ export function calcularMetricas(
     );
   }
 
+  const emDia = ativos.filter((c) => diasAteVencimento(c.proximo_vencimento, referencia) >= 0);
   const vencidosLista = ativos.filter((c) => diasAteVencimento(c.proximo_vencimento, referencia) < 0);
 
   const somar = (lista: ClienteComRelacoes[]) =>
     lista.reduce((total, cliente) => total + Number(cliente.valor), 0);
-
-  // Total já recebido: soma de todos os pagamentos registrados, inclusive com data futura.
-  const totalRecebido = pagamentos.reduce((total, pagamento) => total + Number(pagamento.valor_pago), 0);
 
   const pagamentosDoMes = pagamentos.filter((p) => p.data_pagamento.slice(0, 7) === mes);
   const recebidoMes = pagamentosDoMes.reduce((t, p) => t + Number(p.valor_pago), 0);
@@ -259,7 +257,7 @@ export function calcularMetricas(
     recorrentes: clientes.filter((c) => (pagamentosPorCliente.get(c.id) ?? 0) >= 2).length,
     vencidos: vencidosLista.length,
     valorCarteira: somar(ativos),
-    valorEmDia: totalRecebido,
+    valorEmDia: somar(emDia),
     valorVencido: somar(vencidosLista),
     mrr,
     totalRecebidoMes: recebidoMes,
