@@ -48,9 +48,9 @@ export interface ResultadoExclusaoPagamento {
 
 /**
  * Exclui um pagamento registrado por engano (ex.: cobrança duplicada).
- * Quando o registro excluído é o que empurrou o vencimento do cliente para frente,
- * o próximo vencimento volta para `vencimento_anterior`. Se outro pagamento do mesmo
- * cliente justifica a data atual, ela é preservada.
+ * Após a exclusão, o próximo vencimento do cliente é recalculado pela cadeia de
+ * pagamentos que continua existindo — indicadores derivados (situação, valor em dia,
+ * valor vencido) acompanham automaticamente.
  */
 export function useExcluirPagamento() {
   const queryClient = useQueryClient();
@@ -64,7 +64,7 @@ export function useExcluirPagamento() {
     ): Promise<ResultadoExclusaoPagamento> => {
       const { data: irmaos, error: erroIrmaos } = await supabase
         .from("pagamentos")
-        .select("id, vencimento_novo")
+        .select("id, vencimento_anterior, vencimento_novo")
         .eq("cliente_id", pagamento.cliente_id);
       if (erroIrmaos) throw erroIrmaos;
 
@@ -82,7 +82,11 @@ export function useExcluirPagamento() {
       if (erroCliente) throw erroCliente;
 
       const novoVencimento = vencimentoAposExclusao({
-        excluido: pagamento,
+        excluido: {
+          id: pagamento.id,
+          vencimento_anterior: pagamento.vencimento_anterior,
+          vencimento_novo: pagamento.vencimento_novo,
+        },
         outrosPagamentos: (irmaos ?? []).filter((irmao) => irmao.id !== pagamento.id),
         vencimentoAtualCliente: cliente?.proximo_vencimento ?? null,
       });
@@ -98,8 +102,10 @@ export function useExcluirPagamento() {
       return { vencimentoRevertidoPara: novoVencimento };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: pagamentosQueryKey });
-      queryClient.invalidateQueries({ queryKey: clientesQueryKey });
+      // refetchType "all" garante que telas fora de foco (Dashboard, detalhes) também
+      // recarreguem e deixem de somar o pagamento excluído.
+      queryClient.invalidateQueries({ queryKey: pagamentosQueryKey, refetchType: "all" });
+      queryClient.invalidateQueries({ queryKey: clientesQueryKey, refetchType: "all" });
     },
   });
 }

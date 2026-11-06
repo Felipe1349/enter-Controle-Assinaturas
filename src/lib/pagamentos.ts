@@ -18,16 +18,19 @@ export function registrarPorMes(pagamentos: Pagamento[]): MesRegistrado[] {
 }
 
 interface PagamentoComVencimentos {
+  id: string;
   vencimento_anterior: string | null;
   vencimento_novo: string | null;
 }
 
 /**
- * Decide para qual data volta o próximo vencimento do cliente ao excluir um pagamento.
- * Retorna a nova data ou `null` quando nada deve ser alterado:
- * - o pagamento não tem as datas de referência;
- * - o vencimento atual do cliente não foi gerado por esse pagamento;
- * - outro pagamento do mesmo cliente ainda justifica a data atual (ex.: duplicata idêntica).
+ * Recalcula o próximo vencimento do cliente a partir dos pagamentos que continuam existindo.
+ *
+ * Só altera a data quando o vencimento atual foi gerado pela cadeia de pagamentos
+ * (é o maior `vencimento_novo` registrado). Se a data foi ajustada manualmente no
+ * cadastro do cliente, nada é alterado.
+ *
+ * Sem pagamentos restantes, volta para `vencimento_anterior` do pagamento excluído.
  */
 export function vencimentoAposExclusao({
   excluido,
@@ -35,16 +38,21 @@ export function vencimentoAposExclusao({
   vencimentoAtualCliente,
 }: {
   excluido: PagamentoComVencimentos;
-  outrosPagamentos: Pick<PagamentoComVencimentos, "vencimento_novo">[];
+  outrosPagamentos: PagamentoComVencimentos[];
   vencimentoAtualCliente: string | null;
 }): string | null {
-  if (!excluido.vencimento_anterior || !excluido.vencimento_novo) return null;
-  if (vencimentoAtualCliente !== excluido.vencimento_novo) return null;
+  const maior = (lista: PagamentoComVencimentos[]): string | null =>
+    lista.reduce<string | null>((maximo, pagamento) => {
+      const data = pagamento.vencimento_novo;
+      if (!data) return maximo;
+      return !maximo || data > maximo ? data : maximo;
+    }, null);
 
-  const outroJustifica = outrosPagamentos.some(
-    (pagamento) => pagamento.vencimento_novo === excluido.vencimento_novo,
-  );
-  if (outroJustifica) return null;
+  const cadeiaCompleta = maior([excluido, ...outrosPagamentos]);
+  if (!cadeiaCompleta || vencimentoAtualCliente !== cadeiaCompleta) return null;
 
-  return excluido.vencimento_anterior;
+  const novo = maior(outrosPagamentos) ?? excluido.vencimento_anterior;
+  if (!novo || novo === vencimentoAtualCliente) return null;
+
+  return novo;
 }
