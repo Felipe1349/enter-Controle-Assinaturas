@@ -1,5 +1,6 @@
-import { ChevronLeft, ChevronRight, CalendarDays, CircleDot } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, CircleDot, Filter, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatusClienteBadge } from "@/components/status-badge";
@@ -14,6 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useClientes } from "@/hooks/use-clientes";
 import { usePagamentos } from "@/hooks/use-pagamentos";
@@ -65,25 +68,30 @@ const Calendario = () => {
   });
   const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
   const [clientePagamento, setClientePagamento] = useState<ClienteComRelacoes | null>(null);
+  const [dataInicial, setDataInicial] = useState("");
+  const [dataFinal, setDataFinal] = useState("");
+  const [periodo, setPeriodo] = useState<{ inicio: string; fim: string } | null>(null);
 
   const vencimentosPorDia = useMemo(() => {
     const mapa = new Map<string, ClienteComRelacoes[]>();
     for (const cliente of clientes ?? []) {
       if (cliente.status !== "ativo") continue;
       const chave = cliente.proximo_vencimento.slice(0, 10);
+      if (periodo && (chave < periodo.inicio || chave > periodo.fim)) continue;
       mapa.set(chave, [...(mapa.get(chave) ?? []), cliente]);
     }
     return mapa;
-  }, [clientes]);
+  }, [clientes, periodo]);
 
   const recebimentosPorDia = useMemo(() => {
     const mapa = new Map<string, PagamentoComCliente[]>();
     for (const pagamento of pagamentos ?? []) {
       const chave = pagamento.data_pagamento.slice(0, 10);
+      if (periodo && (chave < periodo.inicio || chave > periodo.fim)) continue;
       mapa.set(chave, [...(mapa.get(chave) ?? []), pagamento]);
     }
     return mapa;
-  }, [pagamentos]);
+  }, [pagamentos, periodo]);
 
   const grade = useMemo(() => {
     const ano = mesReferencia.getFullYear();
@@ -101,20 +109,53 @@ const Calendario = () => {
 
   const resumoMes = useMemo(() => {
     const prefixo = `${mesReferencia.getFullYear()}-${`${mesReferencia.getMonth() + 1}`.padStart(2, "0")}`;
-    const vencimentos = (clientes ?? []).filter(
-      (cliente) =>
-        cliente.status === "ativo" && cliente.proximo_vencimento.slice(0, 7) === prefixo,
-    );
-    const recebimentos = (pagamentos ?? []).filter(
-      (pagamento) => pagamento.data_pagamento.slice(0, 7) === prefixo,
-    );
+    const noMes = (iso: string) => iso.slice(0, 7) === prefixo;
+    const noPeriodo = (iso: string) => !periodo || (iso >= periodo.inicio && iso <= periodo.fim);
+
+    const vencimentos = (clientes ?? []).filter((cliente) => {
+      const vencimento = cliente.proximo_vencimento.slice(0, 10);
+      return cliente.status === "ativo" && noMes(vencimento) && noPeriodo(vencimento);
+    });
+    const recebimentos = (pagamentos ?? []).filter((pagamento) => {
+      const data = pagamento.data_pagamento.slice(0, 10);
+      return noMes(data) && noPeriodo(data);
+    });
     return {
       aReceber: vencimentos.reduce((soma, cliente) => soma + Number(cliente.valor), 0),
       qtdVencimentos: vencimentos.length,
       recebido: recebimentos.reduce((soma, pagamento) => soma + Number(pagamento.valor_pago), 0),
       qtdRecebimentos: recebimentos.length,
     };
-  }, [clientes, pagamentos, mesReferencia]);
+  }, [clientes, pagamentos, mesReferencia, periodo]);
+
+  const aplicarFiltro = () => {
+    if (!dataInicial || !dataFinal) {
+      toast.error("Informe a data inicial e a data final.");
+      return;
+    }
+    if (dataInicial > dataFinal) {
+      toast.error("A data inicial não pode ser maior que a data final.");
+      return;
+    }
+    setPeriodo({ inicio: dataInicial, fim: dataFinal });
+
+    const mesInicio = dataInicial.slice(0, 7);
+    const mesFim = dataFinal.slice(0, 7);
+    const mesAtual = `${mesReferencia.getFullYear()}-${`${mesReferencia.getMonth() + 1}`.padStart(2, "0")}`;
+    if (mesAtual < mesInicio || mesAtual > mesFim) {
+      const [ano, mes] = dataInicial.split("-").map(Number);
+      setMesReferencia(new Date(ano, mes - 1, 1));
+    }
+  };
+
+  const limparFiltros = () => {
+    setDataInicial("");
+    setDataFinal("");
+    setPeriodo(null);
+  };
+
+  const foraDoPeriodo = (iso: string) =>
+    Boolean(periodo) && (iso < (periodo?.inicio ?? "") || iso > (periodo?.fim ?? ""));
 
   const mudarMes = (delta: number) =>
     setMesReferencia(
@@ -158,6 +199,44 @@ const Calendario = () => {
           </div>
         }
       />
+
+      <Card className="card-gradient border-border/70 shadow-card">
+        <CardContent className="flex flex-col gap-3 p-4 lg:flex-row lg:items-end">
+          <div className="space-y-1 lg:w-44">
+            <Label htmlFor="data-inicial">Data inicial</Label>
+            <Input
+              id="data-inicial"
+              type="date"
+              value={dataInicial}
+              onChange={(evento) => setDataInicial(evento.target.value)}
+            />
+          </div>
+          <div className="space-y-1 lg:w-44">
+            <Label htmlFor="data-final">Data final</Label>
+            <Input
+              id="data-final"
+              type="date"
+              value={dataFinal}
+              onChange={(evento) => setDataFinal(evento.target.value)}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" onClick={aplicarFiltro}>
+              <Filter className="h-4 w-4" />
+              Filtrar
+            </Button>
+            <Button type="button" variant="outline" onClick={limparFiltros}>
+              <X className="h-4 w-4" />
+              Limpar filtros
+            </Button>
+          </div>
+          {periodo ? (
+            <span className="text-xs text-muted-foreground lg:ml-auto">
+              Período: {formatarData(periodo.inicio)} a {formatarData(periodo.fim)}
+            </span>
+          ) : null}
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
         <Resumo rotulo="Vencimentos no mês" valor={String(resumoMes.qtdVencimentos)} />
@@ -204,13 +283,17 @@ const Calendario = () => {
                   const recebimentos = recebimentosPorDia.get(iso) ?? [];
                   const tom = tomDoDia(iso, vencimentos.length > 0, recebimentos.length > 0);
                   const ehHoje = iso === hoje;
+                  const fora = foraDoPeriodo(iso);
 
                   return (
                     <button
                       key={iso}
                       type="button"
+                      disabled={fora}
                       onClick={() => setDiaSelecionado(iso)}
-                      className={`flex h-16 flex-col items-start gap-1 rounded-lg border p-1.5 text-left transition-smooth hover:border-primary/50 hover:shadow-card sm:h-24 sm:p-2 ${ESTILOS_TOM[tom]}`}
+                      className={`flex h-16 flex-col items-start gap-1 rounded-lg border p-1.5 text-left transition-smooth hover:border-primary/50 hover:shadow-card sm:h-24 sm:p-2 ${
+                        fora ? "border-border/40 bg-muted/30 opacity-40" : ESTILOS_TOM[tom]
+                      }`}
                     >
                       <span
                         className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold sm:text-xs ${
