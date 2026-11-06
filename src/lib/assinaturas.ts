@@ -258,7 +258,7 @@ export function calcularMetricas(
     novos: clientes.filter((c) => diasAteVencimento(c.data_cadastro, referencia) >= -30).length,
     recorrentes: clientes.filter((c) => (pagamentosPorCliente.get(c.id) ?? 0) >= 2).length,
     vencidos: vencidosLista.length,
-    valorCarteira: somar(ativos) + totalRecebido,
+    valorCarteira: somar(ativos),
     valorEmDia: totalRecebido,
     valorVencido: somar(vencidosLista),
     mrr,

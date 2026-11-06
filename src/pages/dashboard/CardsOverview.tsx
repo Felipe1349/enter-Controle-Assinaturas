@@ -80,7 +80,7 @@ export function CardsOverview({ metricas }: CardsOverviewProps) {
     {
       titulo: "Valor Total da Carteira",
       valor: formatarMoeda(metricas.valorCarteira),
-      descricao: "Assinaturas ativas + total recebido",
+      descricao: "Somatório das assinaturas ativas",
       icone: Wallet,
       tom: "primary",
     },
