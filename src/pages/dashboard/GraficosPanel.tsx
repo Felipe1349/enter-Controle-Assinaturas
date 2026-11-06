@@ -61,7 +61,7 @@ export function GraficosPanel({
 
         <GraficoCard
           titulo="Clientes por responsável"
-          descricao="Carteira de Lucas, Kalleu e cadastros sem responsável"
+          descricao="Carteira de Lucas, Kalleo e cadastros sem responsável"
         >
           <ClientesPorResponsavelChart dados={porResponsavel} />
         </GraficoCard>

@@ -1,0 +1,3 @@
+alter table public.clientes drop constraint if exists clientes_responsavel_valido;
+update public.clientes set responsavel = 'KALLEO' where responsavel = 'KALLEU';
+alter table public.clientes add constraint clientes_responsavel_valido check (responsavel is null or responsavel in ('LUCAS', 'KALLEO'));

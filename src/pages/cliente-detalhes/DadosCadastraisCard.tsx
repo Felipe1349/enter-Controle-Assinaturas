@@ -34,7 +34,9 @@ export function DadosCadastraisCard({ cliente }: DadosCadastraisCardProps) {
             </dt>
             <dd className="flex items-center gap-2">
               <span className="text-sm font-medium">{formatarTelefone(cliente.whatsapp)}</span>
-              <WhatsAppButton nome={cliente.nome_completo} whatsapp={cliente.whatsapp} />
+              {cliente.status === "ativo" ? (
+                <WhatsAppButton nome={cliente.nome_completo} whatsapp={cliente.whatsapp} />
+              ) : null}
             </dd>
           </div>
           <Campo

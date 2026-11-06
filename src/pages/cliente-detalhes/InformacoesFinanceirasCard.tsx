@@ -68,7 +68,7 @@ export function InformacoesFinanceirasCard({
             </p>
           </div>
           <div className="flex flex-col items-start gap-1 sm:items-end">
-            <StatusCobrancaBadge dias={dias} />
+            {cliente.status === "ativo" ? <StatusCobrancaBadge dias={dias} /> : null}
             <span className="text-xs text-muted-foreground">
               Periodicidade de {intervalo} dias
             </span>

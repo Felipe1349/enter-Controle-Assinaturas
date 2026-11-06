@@ -72,7 +72,9 @@ export function ClientesTabela({
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span className="text-sm">{formatarTelefone(cliente.whatsapp)}</span>
-                          <WhatsAppButton nome={cliente.nome_completo} whatsapp={cliente.whatsapp} />
+                          {cliente.status === "ativo" ? (
+                            <WhatsAppButton nome={cliente.nome_completo} whatsapp={cliente.whatsapp} />
+                          ) : null}
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
@@ -91,7 +93,7 @@ export function ClientesTabela({
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col items-start gap-1">
-                          <StatusCobrancaBadge dias={dias} />
+                          {cliente.status === "ativo" ? <StatusCobrancaBadge dias={dias} /> : null}
                           <StatusClienteBadge status={cliente.status} />
                         </div>
                       </TableCell>
@@ -162,7 +164,7 @@ export function ClientesTabela({
                 </div>
 
                 <div className="flex flex-wrap gap-1.5">
-                  <StatusCobrancaBadge dias={dias} />
+                  {cliente.status === "ativo" ? <StatusCobrancaBadge dias={dias} /> : null}
                   <StatusClienteBadge status={cliente.status} />
                 </div>
 
@@ -186,11 +188,15 @@ export function ClientesTabela({
                 </div>
 
                 <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-3">
-                  <WhatsAppButton
-                    nome={cliente.nome_completo}
-                    whatsapp={cliente.whatsapp}
-                    mostrarTexto
-                  />
+                  {cliente.status === "ativo" ? (
+                    <WhatsAppButton
+                      nome={cliente.nome_completo}
+                      whatsapp={cliente.whatsapp}
+                      mostrarTexto
+                    />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Inativo — sem cobrança</span>
+                  )}
                   <div className="flex items-center gap-1">
                     <Button
                       variant="outline"

@@ -141,6 +141,9 @@ export function aplicarFiltroRapido(
   if (filtro === "ativos") return cliente.status === "ativo";
   if (filtro === "inativos") return cliente.status === "inativo";
 
+  // Clientes inativos não entram em nenhum filtro de cobrança.
+  if (cliente.status !== "ativo") return false;
+
   const { dias } = situacaoDoCliente(cliente, referencia);
   if (filtro === "vencidos") return dias < 0;
   if (filtro === "vence_hoje") return dias === 0;
@@ -184,7 +187,7 @@ export function calcularAlertas(
         return dias >= 1 && dias <= 3;
       }),
     ),
-    semPagamento60Dias: clientes.filter((c) => {
+    semPagamento60Dias: ativos.filter((c) => {
       const ultimo = ultimoPagamento.get(c.id);
       if (!ultimo) return true;
       return diasAteVencimento(ultimo, referencia) < -diasSemPagamento;
@@ -359,11 +362,11 @@ export function contarPorEmpresa(
 
 const ROTULOS_RESPONSAVEL: Record<string, string> = {
   LUCAS: "Lucas",
-  KALLEU: "Kalleu",
+  KALLEO: "Kalleo",
   sem_responsavel: "Sem responsável",
 };
 
-/** Distribuição da carteira por responsável (Lucas, Kalleu e cadastros ainda sem responsável). */
+/** Distribuição da carteira por responsável (Lucas, Kalleo e cadastros ainda sem responsável). */
 export function contarPorResponsavel(
   clientes: ClienteComRelacoes[],
 ): { chave: string; label: string; total: number }[] {

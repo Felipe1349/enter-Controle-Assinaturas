@@ -17,7 +17,7 @@ import type { ClienteComRelacoes } from "@/types/assinaturas";
 import { RESPONSAVEIS } from "@/types/assinaturas";
 const esquema = z.object({
   nome_completo: z.string().trim().min(3, "Informe o nome completo do cliente"),
-  responsavel: z.string().refine(valor => valor === "LUCAS" || valor === "KALLEU", "Selecione o responsável"),
+  responsavel: z.string().refine(valor => valor === "LUCAS" || valor === "KALLEO", "Selecione o responsável"),
   whatsapp: z.string().trim().refine(valor => valor === "" || valor.replace(/\D/g, "").length >= 10, "Informe o WhatsApp com o código do país (+44)"),
   empresa_id: z.string().min(1, "Selecione a empresa"),
   plano_id: z.string().min(1, "Selecione o plano"),

@@ -66,12 +66,14 @@ const ClienteDetalhes = () => {
         } · ${validadeLabel(dias)}`}
         acoes={
           <>
-            <WhatsAppButton
-              nome={cliente.nome_completo}
-              whatsapp={cliente.whatsapp}
-              mostrarTexto
-              size="sm"
-            />
+            {cliente.status === "ativo" ? (
+              <WhatsAppButton
+                nome={cliente.nome_completo}
+                whatsapp={cliente.whatsapp}
+                mostrarTexto
+                size="sm"
+              />
+            ) : null}
             <Button variant="hero" size="sm" onClick={() => setPagamentoAberto(true)}>
               <Banknote className="h-4 w-4" />
               Receber pagamento
@@ -85,7 +87,7 @@ const ClienteDetalhes = () => {
       />
 
       <div className="flex flex-wrap gap-2">
-        <StatusCobrancaBadge dias={dias} />
+        {cliente.status === "ativo" ? <StatusCobrancaBadge dias={dias} /> : null}
         <StatusClienteBadge status={cliente.status} />
       </div>
 

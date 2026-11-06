@@ -17,7 +17,7 @@ const SELECT_CLIENTE = "*, empresas(*), planos(*)";
 
 export function paraPayloadCliente(dados: ClienteFormulario) {
   const responsavelValido =
-    dados.responsavel === "LUCAS" || dados.responsavel === "KALLEU"
+    dados.responsavel === "LUCAS" || dados.responsavel === "KALLEO"
       ? dados.responsavel
       : null;
 

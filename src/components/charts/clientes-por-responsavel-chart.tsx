@@ -10,7 +10,7 @@ import {
 const CONFIG = {
   total: { label: "Clientes" },
   LUCAS: { label: "Lucas", color: "hsl(var(--primary))" },
-  KALLEU: { label: "Kalleu", color: "hsl(var(--accent))" },
+  KALLEO: { label: "Kalleo", color: "hsl(var(--accent))" },
   sem_responsavel: { label: "Sem responsável", color: "hsl(var(--muted-foreground))" },
 } satisfies ChartConfig;
 

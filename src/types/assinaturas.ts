@@ -1,10 +1,10 @@
 export type StatusCliente = "ativo" | "inativo";
 
-export type Responsavel = "LUCAS" | "KALLEU";
+export type Responsavel = "LUCAS" | "KALLEO";
 
 export const RESPONSAVEIS: { valor: Responsavel; label: string }[] = [
   { valor: "LUCAS", label: "LUCAS" },
-  { valor: "KALLEU", label: "KALLEU" },
+  { valor: "KALLEO", label: "KALLEO" },
 ];
 
 export type FormaPagamento = "pix" | "cartao" | "dinheiro" | "transferencia";
