@@ -80,14 +80,14 @@ export function CardsOverview({ metricas }: CardsOverviewProps) {
     {
       titulo: "Valor Total da Carteira",
       valor: formatarMoeda(metricas.valorCarteira),
-      descricao: "Somatório das assinaturas ativas",
+      descricao: "Assinaturas ativas + total recebido",
       icone: Wallet,
       tom: "primary",
     },
     {
       titulo: "Valor em Dia",
       valor: formatarMoeda(metricas.valorEmDia),
-      descricao: "Assinaturas dentro do prazo",
+      descricao: "Total recebido, inclui pagamentos com data futura",
       icone: BadgeCheck,
       tom: "success",
     },
