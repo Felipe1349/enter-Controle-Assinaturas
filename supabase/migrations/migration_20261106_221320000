@@ -1,0 +1,46 @@
+create table public.caixa_saldo (
+  id uuid primary key default gen_random_uuid(),
+  valor numeric(12,2) not null default 0,
+  atualizado_em timestamptz not null default now()
+);
+
+create table public.despesas_fixas (
+  id uuid primary key default gen_random_uuid(),
+  descricao text not null,
+  valor numeric(12,2) not null check (valor > 0),
+  dia_vencimento integer not null check (dia_vencimento between 1 and 31),
+  ativo boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table public.despesas_lancamentos (
+  id uuid primary key default gen_random_uuid(),
+  fixa_id uuid references public.despesas_fixas(id) on delete cascade,
+  descricao text not null,
+  valor numeric(12,2) not null check (valor > 0),
+  categoria text,
+  competencia date not null,
+  data_vencimento date not null,
+  status text not null default 'pendente' check (status in ('pendente','pago')),
+  pago_em date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index despesas_lancamentos_fixa_competencia_uidx on public.despesas_lancamentos (fixa_id, competencia);
+create index despesas_lancamentos_competencia_idx on public.despesas_lancamentos (competencia);
+create index despesas_lancamentos_status_idx on public.despesas_lancamentos (status);
+
+create trigger despesas_lancamentos_set_updated_at
+before update on public.despesas_lancamentos
+for each row execute function public.set_updated_at();
+
+alter table public.caixa_saldo enable row level security;
+alter table public.despesas_fixas enable row level security;
+alter table public.despesas_lancamentos enable row level security;
+
+create policy caixa_saldo_acesso_app on public.caixa_saldo for all to anon, authenticated using (true) with check (true);
+create policy despesas_fixas_acesso_app on public.despesas_fixas for all to anon, authenticated using (true) with check (true);
+create policy despesas_lancamentos_acesso_app on public.despesas_lancamentos for all to anon, authenticated using (true) with check (true);
+
+insert into public.caixa_saldo (valor) values (0);

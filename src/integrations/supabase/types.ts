@@ -3360,6 +3360,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      caixa_saldo: {
+        Row: {
+          atualizado_em: string
+          id: string
+          valor: number
+        }
+        Insert: {
+          atualizado_em?: string
+          id?: string
+          valor?: number
+        }
+        Update: {
+          atualizado_em?: string
+          id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           created_at: string
@@ -3444,6 +3462,82 @@ export type Database = {
           valor?: string | null
         }
         Relationships: []
+      }
+      despesas_fixas: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          descricao: string
+          dia_vencimento: number
+          id: string
+          valor: number
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          descricao: string
+          dia_vencimento: number
+          id?: string
+          valor: number
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string
+          dia_vencimento?: number
+          id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      despesas_lancamentos: {
+        Row: {
+          categoria: string | null
+          competencia: string
+          created_at: string
+          data_vencimento: string
+          descricao: string
+          fixa_id: string | null
+          id: string
+          pago_em: string | null
+          status: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          categoria?: string | null
+          competencia: string
+          created_at?: string
+          data_vencimento: string
+          descricao: string
+          fixa_id?: string | null
+          id?: string
+          pago_em?: string | null
+          status?: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string | null
+          competencia?: string
+          created_at?: string
+          data_vencimento?: string
+          descricao?: string
+          fixa_id?: string | null
+          id?: string
+          pago_em?: string | null
+          status?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "despesas_lancamentos_fixa_id_fkey"
+            columns: ["fixa_id"]
+            referencedRelation: "despesas_fixas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       empresas: {
         Row: {

@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   LayoutDashboard,
+  Landmark,
   Receipt,
   Settings,
   Users,
@@ -24,6 +25,7 @@ const ITENS: ItemNavegacao[] = [
   { para: "/clientes", label: "Clientes", icone: Users },
   { para: "/pagamentos", label: "Pagamentos", icone: Receipt },
   { para: "/calendario", label: "Calendário financeiro", icone: CalendarDays },
+  { para: "/caixa", label: "Caixa da Empresa", icone: Landmark },
   { para: "/configuracoes", label: "Configurações", icone: Settings },
 ];
 

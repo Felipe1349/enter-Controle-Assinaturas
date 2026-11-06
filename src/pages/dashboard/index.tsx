@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboard } from "@/hooks/use-dashboard";
 
 import { AlertasPanel } from "./AlertasPanel";
+import { CaixaResumoCard } from "./CaixaResumoCard";
 import { CardsOverview } from "./CardsOverview";
 import { FiltrosRapidos } from "./FiltrosRapidos";
 import { GraficosPanel } from "./GraficosPanel";
@@ -74,6 +75,7 @@ const Dashboard = () => {
             receitaSemanal={receitaSemanal}
             porSituacao={porSituacao}
           />
+          <CaixaResumoCard />
           <MetricasPanel metricas={metricas} />
         </>
       )}

@@ -9,6 +9,7 @@ const Clientes = lazy(() => import("./pages/clientes"));
 const ClienteDetalhes = lazy(() => import("./pages/cliente-detalhes"));
 const Pagamentos = lazy(() => import("./pages/pagamentos"));
 const Calendario = lazy(() => import("./pages/calendario"));
+const Caixa = lazy(() => import("./pages/caixa"));
 const Configuracoes = lazy(() => import("./pages/configuracoes"));
 
 export const routers = [
@@ -41,6 +42,11 @@ export const routers = [
         path: "calendario",
         name: "calendario",
         element: <Calendario />,
+      },
+      {
+        path: "caixa",
+        name: "caixa",
+        element: <Caixa />,
       },
       {
         path: "configuracoes",
