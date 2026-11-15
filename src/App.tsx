@@ -11,7 +11,9 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       staleTime: 30_000,
-      retry: 1,
+      // Falhas de rede (status 0) costumam ser passageiras: tenta novamente com espera crescente.
+      retry: 3,
+      retryDelay: (tentativa) => Math.min(1000 * 2 ** tentativa, 8000),
     },
   },
 });

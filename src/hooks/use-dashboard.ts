@@ -62,5 +62,9 @@ export function useDashboard() {
     pagamentos,
     carregando: clientesQuery.isLoading || pagamentosQuery.isLoading,
     erro: clientesQuery.isError || pagamentosQuery.isError,
+    recarregar: () => {
+      void clientesQuery.refetch();
+      void pagamentosQuery.refetch();
+    },
   };
 }
