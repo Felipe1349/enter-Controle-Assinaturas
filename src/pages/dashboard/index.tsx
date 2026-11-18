@@ -26,6 +26,7 @@ const Dashboard = () => {
     porSituacao,
     carregando,
     erro,
+    recarregar,
   } = useDashboard();
 
   return (
@@ -53,16 +54,19 @@ const Dashboard = () => {
 
       {erro ? (
         <Card className="border-destructive/40 bg-destructive/5">
-          <CardContent className="flex items-center gap-3 p-6 text-sm">
+          <CardContent className="flex flex-wrap items-center gap-3 p-6 text-sm">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Não foi possível carregar os dados do dashboard. Verifique a conexão e tente novamente.
+            <span>Não foi possível carregar os dados do dashboard. Verifique a conexão e tente novamente.</span>
+            <Button type="button" variant="outline" size="sm" onClick={recarregar}>
+              Tentar novamente
+            </Button>
           </CardContent>
         </Card>
       ) : null}
 
       {carregando ? (
         <DashboardSkeleton />
-      ) : (
+      ) : !erro ? (
         <>
           <CardsOverview metricas={metricas} />
           <FiltrosRapidos />
@@ -78,7 +82,7 @@ const Dashboard = () => {
           <CaixaResumoCard />
           <MetricasPanel metricas={metricas} />
         </>
-      )}
+      ) : null}
     </div>
   );
 };
